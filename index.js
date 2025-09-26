@@ -1,6 +1,10 @@
-const express = require("express");
-const cors = require("cors");
-require("dotenv").config();
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import healthRouter from "./api/routes/healtRouter.js";
+import marketRouter from "./api/routes/marketRouter.js";
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -9,13 +13,9 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Importar rutas
-const transferNFTRoute = require("./api/transfer-nft");
-const healthRoute = require("./api/health");
-
 // Usar las rutas
-app.post("/api/transfer-nft", transferNFTRoute);
-app.get("/api/health", healthRoute);
+app.use("/api/market", marketRouter);
+app.use("/api/health", healthRouter);
 
 // Manejo de errores
 app.use((err, req, res, next) => {
@@ -35,5 +35,5 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-// Exportar la app para Vercel (si decides desplegar la app Express completa en Vercel, pero no es el enfoque de edge functions)
-module.exports = app;
+// Exportar la app para Vercel
+export default app;
