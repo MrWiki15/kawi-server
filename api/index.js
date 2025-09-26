@@ -1,8 +1,9 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import healthRouter from "./api/routes/healtRouter.js";
-import marketRouter from "./api/routes/marketRouter.js";
+import serverless from "serverless-http";
+import healthRouter from "./routes/healtRouter.js";
+import marketRouter from "./routes/marketRouter.js";
 
 dotenv.config();
 
@@ -29,4 +30,4 @@ app.use((req, res) => {
 });
 
 // Exportar la app para Vercel
-export default app;
+export default serverless(app);
