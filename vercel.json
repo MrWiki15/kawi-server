@@ -1,40 +1,15 @@
 {
-  "functions": {
-    "api/controlers/healtController/health.js": {
-      "maxDuration": 30,
-      "memory": 1024
-    },
-    "api/controlers/marketController/codeNftController.js": {
-      "maxDuration": 30,
-      "memory": 1024
-    },
-    "api/controlers/marketController/buyNftController.js": {
-      "maxDuration": 30,
-      "memory": 1024
-    },
-    "api/controlers/marketController/listNftController.js": {
-      "maxDuration": 30,
-      "memory": 1024
-    },
-    "api/controlers/marketController/deslistNftController.js": {
-      "maxDuration": 30,
-      "memory": 1024
-    }
-  },
-  "headers": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,POST,PUT,DELETE,OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-Requested-With, Content-Type, Authorization"
-        }
-      ]
+      "src": "api/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "api/index.js"
     }
   ]
 }

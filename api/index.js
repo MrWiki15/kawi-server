@@ -29,5 +29,15 @@ app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 
+//Despliegue en server normal
+app.listen(3001, () => {
+  console.log(`🚀 Servidor escuchando en puerto ${PORT}`);
+  console.log(
+    `🔒 Modo seguro: ${
+      process.env.NODE_ENV === "production" ? "Activado" : "Desarrollo"
+    }`
+  );
+});
+
 // Exportar la app para Vercel
-export default serverless(app);
+export default app;
