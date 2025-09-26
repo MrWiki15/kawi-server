@@ -1,12 +1,24 @@
 {
   "functions": {
-    "api/transfer-nft.js": {
+    "api/controlers/healtController/health.js": {
       "maxDuration": 30,
       "memory": 1024
     },
-    "api/health.js": {
-      "maxDuration": 10,
-      "memory": 128
+    "api/controlers/marketController/codeNftController.js": {
+      "maxDuration": 30,
+      "memory": 1024
+    },
+    "api/controlers/marketController/buyNftController.js": {
+      "maxDuration": 30,
+      "memory": 1024
+    },
+    "api/controlers/marketController/listNftController.js": {
+      "maxDuration": 30,
+      "memory": 1024
+    },
+    "api/controlers/marketController/deslistNftController.js": {
+      "maxDuration": 30,
+      "memory": 1024
     }
   },
   "headers": [

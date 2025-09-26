@@ -28,12 +28,5 @@ app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 
-// Iniciar servidor solo si no estamos en Vercel
-if (process.env.NODE_ENV !== "production") {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}
-
 // Exportar la app para Vercel
 export default app;
