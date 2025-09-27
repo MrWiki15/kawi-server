@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import serverless from "serverless-http";
 import healthRouter from "./routes/healtRouter.js";
 import marketRouter from "./routes/marketRouter.js";
+import pinataRouter from "./routes/pinataRouter.js";
 
 dotenv.config();
 
@@ -17,6 +17,7 @@ app.use(express.json());
 // Usar las rutas
 app.use("/api/market", marketRouter);
 app.use("/api/health", healthRouter);
+app.use("/api/pinata", pinataRouter);
 
 // Manejo de errores
 app.use((err, req, res, next) => {
@@ -31,12 +32,34 @@ app.use((req, res) => {
 
 //Despliegue en server normal
 app.listen(3001, () => {
+  console.log(
+    "_________________________Info del server_________________________"
+  );
   console.log(`🚀 Servidor escuchando en puerto ${PORT}`);
   console.log(
     `🔒 Modo seguro: ${
       process.env.NODE_ENV === "production" ? "Activado" : "Desarrollo"
     }`
   );
+  console.log(
+    "_________________________Rutas del server_________________________"
+  );
+  console.log("/api/health");
+  console.log("/api/market/create (Crear una coleccion NFT)");
+  console.log("/api/market/list (Listar un NFT)");
+  console.log("/api/market/list/code (Crear codigo de seguridad unico)");
+  console.log("/api/market/deslist (Deslistar un NFT)");
+  console.log("/api/market/buy (Comprar un NFT)");
+  console.log("/api/pinata/upload-image (Subir una imagen individual)");
+  console.log("/api/pinata/upload-metadata (Subir metadata individual)");
+  console.log("/api/pinata/upload-collection (Subir metadata de colección)");
+  console.log(
+    "/api/pinata/upload-batch-images (Subir múltiples imágenes en lote)"
+  );
+  console.log(
+    "/api/pinata/upload-batch-metadata (Subir múltiples metadatas en lote)"
+  );
+  console.log("/api/pinata/status (Verificar conexión y estado de Pinata)");
 });
 
 // Exportar la app para Vercel
