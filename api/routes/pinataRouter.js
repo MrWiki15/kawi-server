@@ -27,6 +27,7 @@ export const upload = multer({
 pinataRouter.post("/upload-image", upload.single("image"), uploadImage);
 
 /**
+
  * RUTA: POST /api/pinata/upload-metadata
  * FUNCIÓN: Subir metadata individual de NFT a IPFS (v3 API)
  */

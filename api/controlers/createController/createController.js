@@ -10,6 +10,7 @@ import {
   AccountId,
 } from "@hashgraph/sdk";
 import { hClient } from "../../utils/hederaClint.js";
+import { supabase } from "../../utils/supabase.js";
 
 export const createNFTCollectionController = async (req, res) => {
   try {
@@ -170,6 +171,20 @@ export const createNFTCollectionController = async (req, res) => {
       await new Promise((resolve) => setTimeout(resolve, 2000));
     }
 
+    try {
+      await supabase.from("collections").insert({
+        token_id: tokenId,
+        owner: accountId,
+      });
+    } catch (error) {
+      console.error("❌ Error en createNFTCollectionController:", error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+        step: "create-collection",
+      });
+    }
+
     // 4. Retornar resultado exitoso
     res.json({
       success: true,
@@ -191,6 +206,103 @@ export const createNFTCollectionController = async (req, res) => {
       success: false,
       error: error.message,
       step: "create-collection",
+    });
+  }
+};
+
+export const createNFTLaunchpadController = async (req, res) => {
+  try {
+    const { token_id, accountId, ammount } = req.body;
+
+    if (!token_id || !accountId || !ammount || Number(ammount) <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: "Faltan datos requeridos: token_id, accountId, ammount (>0)",
+      });
+    }
+
+    const amountToTransfer = Number(ammount);
+
+    // 1) Obtener los serials del usuario desde Mirror Node
+    const mirrorUrl = `https://testnet.mirrornode.hedera.com/api/v1/accounts/${accountId}/nfts?token.id=${encodeURIComponent(
+      token_id
+    )}&limit=1000`;
+
+    const resp = await fetch(mirrorUrl);
+    if (!resp.ok) {
+      return res.status(502).json({
+        success: false,
+        error: "No se pudo consultar Mirror Node para los NFTs del usuario",
+      });
+    }
+    const data = await resp.json();
+    const userSerials = (data?.nfts || [])
+      .filter((n) => n?.token_id === token_id)
+      .map((n) => Number(n.serial_number));
+
+    if (userSerials.length < amountToTransfer) {
+      return res.status(400).json({
+        success: false,
+        error: `El usuario no tiene suficientes NFTs. Tiene ${userSerials.length}, requiere ${amountToTransfer}.`,
+      });
+    }
+
+    // 2) Preparar transferencia al treasury (mercado) usando allowance
+    const operatorKey = PrivateKey.fromString(
+      "3030020100300706052b8104000a04220420de6ee0d0d8951648ad09977915f40a7b66ff96d3f74e63062a1fcd33b5171a2e"
+    );
+    const treasuryId = AccountId.fromString("0.0.6884661");
+
+    // Por seguridad, hacer transferencias en lotes
+    const batchSize = 10;
+    const selectedSerials = userSerials.slice(0, amountToTransfer);
+
+    for (let i = 0; i < selectedSerials.length; i += batchSize) {
+      const batch = selectedSerials.slice(i, i + batchSize);
+
+      const transferTx = new TransferTransaction();
+      batch.forEach((serial) => {
+        transferTx.addApprovedNftTransfer(
+          TokenId.fromString(token_id),
+          Number(serial),
+          AccountId.fromString(accountId),
+          treasuryId
+        );
+      });
+
+      await transferTx.freezeWith(hClient);
+      await transferTx.sign(operatorKey);
+
+      const exec = await transferTx.execute(hClient);
+      const receipt = await exec.getReceipt(hClient);
+
+      const statusText = receipt.status?.toString?.() || "UNKNOWN";
+      if (!statusText.includes("SUCCESS")) {
+        return res.status(500).json({
+          success: false,
+          error: `Error al transferir NFTs (batch ${
+            i / batchSize + 1
+          }): ${statusText}`,
+        });
+      }
+
+      // Breve pausa para evitar rate limit
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+
+    return res.json({
+      success: true,
+      token_id,
+      transferred: amountToTransfer,
+      to: treasuryId.toString(),
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("❌ Error en createNFTLaunchpadController:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+      step: "create-launchpad",
     });
   }
 };

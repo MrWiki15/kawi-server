@@ -32,6 +32,8 @@ const extractErrorInfo = (err) => {
 
 export const uploadFileToPinata = async (fileData, filename, options = {}) => {
   try {
+    console.log("subiendo archivo a pinata");
+    console.log(filename);
     if (!fileData) throw new Error("fileData es requerido");
     if (!filename) throw new Error("filename es requerido");
 

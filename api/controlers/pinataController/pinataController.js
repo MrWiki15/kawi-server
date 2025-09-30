@@ -147,6 +147,10 @@ export const uploadBatchImages = async (req, res) => {
   try {
     console.log("🖼️ Subiendo lote de imágenes...");
 
+    console.log(req.files);
+    console.log("--------------------------------------");
+    console.log(req.body);
+
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
         success: false,
