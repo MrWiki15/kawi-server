@@ -12,6 +12,10 @@ import {
 import { hClient } from "../../utils/hederaClint.js";
 import { supabase } from "../../utils/supabase.js";
 
+export const operatorKey = PrivateKey.fromString(
+  "3030020100300706052b8104000a04220420de6ee0d0d8951648ad09977915f40a7b66ff96d3f74e63062a1fcd33b5171a2e"
+);
+
 export const createNFTCollectionController = async (req, res) => {
   try {
     const {
@@ -43,9 +47,6 @@ export const createNFTCollectionController = async (req, res) => {
       });
     }
 
-    const operatorKey = PrivateKey.fromString(
-      "3030020100300706052b8104000a04220420de6ee0d0d8951648ad09977915f40a7b66ff96d3f74e63062a1fcd33b5171a2e"
-    ); // Clave privada del mercado
     const supplyKey = PrivateKey.generateED25519();
     const metadataKey = PrivateKey.generateED25519();
     let tokenId;
