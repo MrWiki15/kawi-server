@@ -22,7 +22,7 @@ app.use("/api/market", marketRouter); //mercado nft
 app.use("/api/health", healthRouter); //debug
 app.use("/api/pinata", pinataRouter); //metadata
 app.use("/api/create", createRouter); //creacion de nfts
-app.use("/api/launchapd", launchpadRouter); //mint en el launchpad
+app.use("/api/launchpad", launchpadRouter); //mint en el launchpad
 
 // Manejo de errores
 app.use((err, req, res, next) => {
@@ -66,6 +66,6 @@ app.listen(3001, () => {
   );
   console.log("/api/pinata/status (Verificar conexión y estado de Pinata)");
 });
-
+console.log;
 // Exportar la app para Vercel
 export default app;
